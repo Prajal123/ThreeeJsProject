@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My first three.js app</title>
+		<style>
+			body { margin: 0; }
+		</style>
+	</head>
+	<body>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js" ></script>
+		<script src="js/three.js"></script>
+		<script>
+			const scene = new THREE.Scene();
+			const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+			const renderer = new THREE.WebGLRenderer();
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			document.body.appendChild( renderer.domElement );
+            
+            const loader =new THREE.TextureLoader();
+            
+			const geometry = new THREE.BoxGeometry();
+			const material = new THREE.MeshBasicMaterial( {map:loader.load('/textures/img.jpg')} );
+			const cube = new THREE.Mesh( geometry, material );
+			scene.add( cube );
+
+			camera.position.z = 5;
+            let mouseX=0;
+
+   let mouseY=0;
+
+   let targetX=0;
+   let targetY=0;
+
+    let windowX=(window.innerWidth/2);
+    let windowY=(window.innerHeight/2);
+    window.addEventListener('mousemove',onDocumentMouseMove);
+      
+
+
+function onDocumentMouseMove(event){
+    mouseX=(event.clientX - windowX);
+    mouseY=(event.clientY - windowY);
+}
+const clock= new THREE.Clock();
+
+			const animate = function () {
+                const elapsedTime = clock.getElapsedTime()
+                targetX=mouseX*0.01;
+                targetY=mouseY*0.01;
+
+				requestAnimationFrame( animate );
+
+                cube.rotation.x=.5*(targetX-cube.rotation.y);
+              cube.rotation.y=.5*(targetY-cube.rotation.x);
+              cube.position.z=.5*(targetY-cube.rotation.x);
+
+				cube.rotation.x += 0.5*(elapsedTime);
+				cube.rotation.y += 0.5*(elapsedTime);
+
+				renderer.render( scene, camera );
+			};
+
+			animate();
+
+const sizes = {
+    width: window.innerWidth,
+    height: window.innerHeight
+}
+
+ window.addEventListener('resize', () =>{
+
+    // Update sizes
+    sizes.width = window.innerWidth
+    sizes.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(sizes.width, sizes.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+})
+		</script>
+	</body>
+</html>
